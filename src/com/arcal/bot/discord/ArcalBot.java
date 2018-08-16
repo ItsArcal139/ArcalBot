@@ -283,13 +283,10 @@ public class ArcalBot extends ListenerAdapter {
         if(event.getJDA().equals(jda)) {
             ArcalBot bot = this;
             if (!event.isFromType(ChannelType.PRIVATE)) {
+                // We abort DMs.
                 Message msg = event.getMessage();
                 String cmdLine = msg.getContentRaw();
                 Guild guild = msg.getGuild();
-                if(guild == null) {
-                    // We abort DMs.
-                    return;
-                }
 
                 if(this.guildMode && !guild.equals(this.guildManagers.keySet().iterator().next())) {
                     // In guild mode. Abort events from foreign guilds.
