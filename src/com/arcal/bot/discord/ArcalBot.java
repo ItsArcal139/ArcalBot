@@ -246,7 +246,7 @@ public class ArcalBot extends ListenerAdapter {
                     "Who threw that grenade?",
                     "Ouch, that really hurts me."
             );
-            String quote = quotes.get(((int)Math.floor(Math.random())));
+            String quote = quotes.get(((int)Math.floor(Math.random())) * quotes.size());
             eb.setTitle("Oh, snap!");
             eb.setDescription(quote);
             
