@@ -1,5 +1,5 @@
 logs/*
+*.log*
 configs/*
 bot.properties
-nbproject/*
-nbproject/*/*
+nbproject/**/*

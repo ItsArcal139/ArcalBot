@@ -6,7 +6,7 @@
 package com.arcal.bot.discord;
 
 import com.arcal.bot.discord.commands.*;
-import com.arcal.bot.discord.exception.CommandNotFoundException;
+import com.arcal.bot.discord.exception.*;
 import com.arcal.bot.discord.utils.*;
 import java.io.*;
 import java.util.*;
@@ -177,7 +177,6 @@ public class ArcalBot extends ListenerAdapter {
             if(msg != null) {
                 if (result.isSuccessed()) {
                     msg.clearReactions().queue((Void v2) -> {
-                        // msg.addReaction("👌").queue();
                         msg.addReaction("👌").queue();
                     });
                 } else {
