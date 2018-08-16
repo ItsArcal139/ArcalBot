@@ -188,12 +188,12 @@ public class ArcalBot extends ListenerAdapter {
                             EmbedBuilder eb = new EmbedBuilder();
                             this.buildEmbedByThrowable(eb, thrown, this.doesDumpExceptions(guild));
                             msg.getChannel().sendMessage(eb.build()).queue(v -> {
-                                try {
-                                    Thread.sleep(500);
-                                } catch(InterruptedException ex) {
-                                    // Ignore it, the bot is going to quit.
-                                }
                                 if(thrown instanceof Error) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch(InterruptedException ex) {
+                                        // Ignore it, the bot is going to quit.
+                                    }
                                     System.exit(1);
                                 }
                             });
