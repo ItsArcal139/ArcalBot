@@ -1,0 +1,5 @@
+logs/*
+configs/*
+bot.properties
+nbproject/*
+nbproject/*/*
