@@ -204,17 +204,18 @@ public class Main {
                 throw new IllegalArgumentException("The given guild cannot be null.");
             }
 
-            int index = -1;
-            for(ArcalBot bot : botInstances) {
-                if(g.equals(bot.getGuild())) {
-                    index = botInstances.indexOf(g);
+            ArcalBot bot = null;
+            for(ArcalBot inst : botInstances) {
+                if(g.getId().equals(inst.getGuild().getId())) {
+                    bot = inst;
                     break;
                 }
             }
             
-            ArcalBot bot = botInstances.get(index);
-            bot.shutdown();
-            botInstances.remove(index);
+            if(bot != null) {
+                bot.shutdown();
+                botInstances.remove(bot);
+            }
             return bot;
         }
         return null;
@@ -239,8 +240,7 @@ public class Main {
     
     public static boolean executeCommand(CommandSender sender, String command) {
         for(ArcalBot bot : Main.botInstances) {
-            // bot.handleCommand(ConsoleSender.getInstance(), command, null);
-            bot.pendCommand(ConsoleSender.getInstance(), command, null);
+            bot.pendCommand(ConsoleSender.getInstance(), command);
         }
         return true;
     }

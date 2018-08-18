@@ -44,10 +44,10 @@ public abstract class Command {
     private String description = "A command.";
     
     private boolean isExperimental = false;
-    private Scope cmdScope = Scope.Both;
+    private Scope cmdScope = Scope.All;
     
     public enum Scope {
-        None, Console, User, Both;
+        None, Console, User, Member, All;
     }
     
     protected Command(String name) {
@@ -91,16 +91,19 @@ public abstract class Command {
                     throw new ScopeException("This command is user-only.", Scope.User);
                 }
                 break;
-            case Both:
+            case Member:
+                if(!(sender instanceof MemberSender)) {
+                    throw new ScopeException("This command is in-server only.", Scope.Member);
+                }
                 break;
             case None:
                 throw new ScopeException("This command is currently locked.", Scope.None);
         }
     }
     
-    public abstract void execute(CommandSender sender, ArcalBot bot, String[] args, Message msg);
+    public abstract void execute(CommandSender sender, ArcalBot bot, String[] args);
 
-    public static CommandResult execute(CommandSender sender, String name, ArcalBot bot, String[] args, Message msg) {
+    public static CommandResult execute(CommandSender sender, String name, ArcalBot bot, String[] args) {
         try {
             /*
             if(msg == null) {
@@ -117,18 +120,11 @@ public abstract class Command {
             
             Command cmd = Command.getCommand(name);
             if(cmd != null) {
-                cmd.execute(sender, bot, args, msg);
+                cmd.execute(sender, bot, args);
             } else {
-                if(msg == null) {
-                    LoggerFactory.make("ArcalBot").severe("Command not found!");
+                if(sender instanceof ConsoleSender) {
+                    bot.getLogger().severe("Command not found!");
                 } else {
-                    /*
-                    EmbedBuilder eb = new EmbedBuilder();
-                    eb.setTitle("Error");
-                    eb.setDescription("Command `" + name +"` not found!");
-                    eb.setColor(0xff4414);
-                    eb.setAuthor("ArcalBot", null, bot.getJDA().getSelfUser().getAvatarUrl());
-                    msg.getChannel().sendMessage(eb.build()).queue(); */
                     throw new CommandNotFoundException("Command `" + name + "` not found!");
                 }
             }
@@ -152,10 +148,8 @@ public abstract class Command {
         registry.put("help", new CommandHelp());
         registry.put("exit", new CommandExit());
         registry.put("dump", new CommandDump());
-        
-        // This command should only be registered when debugging.
-        // Unregister it when in release mode.
         registry.put("crash", new CommandCrash());
+        registry.put("react", new CommandReact());
     }
     
     public static Collection<Command> getRegisteredCommands() {

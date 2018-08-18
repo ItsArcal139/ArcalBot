@@ -51,6 +51,7 @@ public class ArcalBot extends ListenerAdapter {
     private boolean guildMode = false;
     
     private boolean isReady = false;
+    private boolean isStarted = false;
 
     public final BotConfiguration getGlobalConfig() {
         return Main.getGlobalConfig();
@@ -114,6 +115,15 @@ public class ArcalBot extends ListenerAdapter {
             }
         }, "Command Handler Loop");
         commandHandler.start();
+        this.isStarted = true;
+    }
+    
+    public boolean isStarted() {
+        return this.isStarted;
+    }
+    
+    public boolean isRunning() {
+        return this.isRunning;
     }
     
     public void shutdown() {
@@ -123,8 +133,8 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
-    public void pendCommand(CommandSender sender, String cmdLine, Message msg) {
-        this.pendingCommands.add(new PendingCommand(this, sender, cmdLine, msg));
+    public void pendCommand(CommandSender sender, String cmdLine) {
+        this.pendingCommands.add(new PendingCommand(this, sender, cmdLine));
     }
     
     public GuildConfiguration getGuildConfig(Guild guild) {
@@ -162,11 +172,11 @@ public class ArcalBot extends ListenerAdapter {
      * @param msg
      * @return 
      */
-    public CommandResult handleCommand(CommandSender sender, String cmdLine, Message msg) {
+    public CommandResult handleCommand(CommandSender sender, String cmdLine) {
         ArcalBot bot = this;
         final Guild guild;
-        if(msg != null) {
-            guild = msg.getGuild();
+        if(sender instanceof MemberSender) {
+            guild = ((MemberSender) sender).getMember().getGuild();
         } else {
             guild = null;
         }
@@ -181,7 +191,7 @@ public class ArcalBot extends ListenerAdapter {
             }
             
             logger.log(Level.INFO, "Start executing commmand => {0}", cmdLine);
-            CommandResult result = Command.execute(sender, cmdName, bot, args, msg);
+            CommandResult result = Command.execute(sender, cmdName, bot, args);
             return result;
         };
 
@@ -192,7 +202,9 @@ public class ArcalBot extends ListenerAdapter {
             CommandResult result = task.get();
             logger.log(Level.INFO, "Executed with result => {0}", result.isSuccessed());
 
-            if(msg != null) {
+            if(sender instanceof UserSender) {
+                Message msg = ((UserSender) sender).getOriginMessage();
+                
                 if (result.isSuccessed()) {
                     msg.clearReactions().queue((Void v2) -> {
                         msg.addReaction("👌").queue();
@@ -316,10 +328,10 @@ public class ArcalBot extends ListenerAdapter {
                 if (shouldHandle) {
                     msg.addReaction("🚥").queue((Void v) -> {
                         Thread t = new Thread(() -> {
-                            CommandSender sender = new UserSender(msg.getAuthor());
-                            if(msg.getMember() != null) sender = new MemberSender(msg.getMember());
+                            CommandSender sender = new UserSender(msg.getAuthor(), msg);
+                            if(msg.getMember() != null) sender = new MemberSender(msg.getMember(), msg);
                             // bot.handleCommand(sender, cmdLine.substring(cmdPrefix.length()), msg);
-                            bot.pendCommand(sender, cmdLine.substring(cmdPrefix.length()), msg);
+                            bot.pendCommand(sender, cmdLine.substring(cmdPrefix.length()));
                         });
                         t.start();
                     });

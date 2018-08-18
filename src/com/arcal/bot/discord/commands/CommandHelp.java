@@ -40,9 +40,10 @@ public class CommandHelp extends Command {
     }
     
     @Override
-    public void execute(CommandSender sender, ArcalBot bot, String[] args, Message msg) {
+    public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);
-        Guild g = msg.getGuild();
+        Guild g = null;
+        if(sender instanceof MemberSender) g = ((MemberSender)sender).getGuild();
         Collection<Command> cmds = Command.getRegisteredCommands();
         
         String link = "https://www.arcal.cf/bot/help";
@@ -58,9 +59,9 @@ public class CommandHelp extends Command {
         eb.addField("Need more info?", "See [here](" + link + ") for more commands.", true);
         sender.sendMessage(eb.build());
         
-        if(msg != null) {
+        if(sender instanceof UserSender) {
             UserSender us = (UserSender) sender;
-            msg.getChannel().sendMessage(us.getMention() + ", check your DM! ;)").queue();
+            us.getOriginMessage().getChannel().sendMessage(us.getMention() + ", check your DM! ;)").queue();
         }
     }
 }

@@ -39,9 +39,11 @@ public class CommandDump extends Command {
     }
     
     @Override
-    public void execute(CommandSender sender, ArcalBot bot, String[] args, Message msg) {
+    public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);
-        Guild g = msg.getGuild();
+        Guild g = null;
+        if(sender instanceof MemberSender) g = ((MemberSender)sender).getGuild();
+        
         boolean flag = !bot.doesDumpExceptions(g);
         if(args.length > 0) {
             String arg = args[0].toLowerCase();
@@ -55,15 +57,16 @@ public class CommandDump extends Command {
         }
         bot.setDumpExceptions(g, flag);
         
-        if(msg == null) {
+        if(sender instanceof ConsoleSender) {
             Logger logger = bot.getLogger();
             logger.info("Set dump mode to " + flag);
         } else {
+            UserSender s = (UserSender) sender;
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Dump mode " + (flag ? "" : "de") +"activated");
             eb.setDescription((flag ? "A" : "Dea") + "ctivated the dump mode.\nThat means if a command failed to execute, I will " + (flag ? "" : "**NOT** ") + "show you the details.");
             eb.setAuthor("ArcalBot", null, bot.getJDA().getSelfUser().getAvatarUrl());
-            msg.getChannel().sendMessage(eb.build()).queue();
+            s.getOriginMessage().getChannel().sendMessage(eb.build()).queue();
         }
     }
 }

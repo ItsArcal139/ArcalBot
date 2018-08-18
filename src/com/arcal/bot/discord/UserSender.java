@@ -32,15 +32,26 @@ import net.dv8tion.jda.core.entities.*;
  */
 public class UserSender implements CommandSender {
     private User user;
+    private Message msg;
     
-    public UserSender(User user) {
+    public UserSender(User user, Message msg) {
         this.user = user;
+        this.msg = msg;
     }
     
+    @Override
     public String getName() {
         return user.getName();
     }
+    
+    public User getUser() {
+        return this.user;
+    }
 
+    public Message getOriginMessage() {
+        return this.msg;
+    }
+    
     @Override
     public void sendMessage(String msg) {
         user.openPrivateChannel().queue(pc -> {

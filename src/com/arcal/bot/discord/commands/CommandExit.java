@@ -41,7 +41,7 @@ public class CommandExit extends Command {
     }
     
     @Override
-    public void execute(CommandSender sender, ArcalBot bot, String[] args, Message msg) {
+    public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);
         synchronized(lock) {
             if(!activated) {

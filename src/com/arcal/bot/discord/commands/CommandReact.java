@@ -25,21 +25,45 @@ package com.arcal.bot.discord.commands;
 
 import com.arcal.bot.discord.*;
 import com.arcal.bot.discord.exception.*;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.*;
+import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
 
 /**
  *
  * @author Arcal
  */
-public class CommandCrash extends Command {
-    public CommandCrash() {
-        super("crash");
-        this.flagCommandScope(Scope.None);
+public class CommandReact extends Command {
+    public CommandReact() {
+        super("react");
+        this.flagCommandScope(Scope.User);
+        this.flagAsExperimental();
     }
-
+    
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);
-        throw new DebugCrashError();
+        Message msg = ((UserSender)sender).getOriginMessage();
+        
+        if(args.length > 0) {
+            try {
+                Emote emote = bot.getJDA().getEmoteById(args[0]);
+                if(emote != null) {
+                    msg.addReaction(emote).queueAfter(2, TimeUnit.SECONDS);
+                } else {
+                    throw new EmoteException("Cannot use emojis of guilds I did not joined!");
+                }
+            } catch(NumberFormatException ex) {
+                try {
+                    msg.addReaction(args[0]).complete();
+                    msg.addReaction(args[0]).queueAfter(2, TimeUnit.SECONDS);
+                } catch(Exception ex2) {
+                    throw new EmoteException("Unknown emoji!", ex2);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Please provide an emoji to react.");
+        }
     }
 }
