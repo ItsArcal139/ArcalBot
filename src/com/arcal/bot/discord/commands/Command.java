@@ -46,30 +46,57 @@ public abstract class Command {
     private boolean isExperimental = false;
     private Scope cmdScope = Scope.All;
     
+    /**
+     * The {@code Scope} indicates the usable range of a command.
+     */
     public enum Scope {
         None, Console, User, Member, All;
     }
     
+    /**
+     * Create a command instance.
+     * @param name The command name.
+     */
     protected Command(String name) {
         this.name = name;
     }
     
+    /**
+     * Indicate that this command is in the specified scope.
+     * @param scope The specified scope.
+     */
     protected final void flagCommandScope(Scope scope) {
         this.cmdScope = scope;
     }
     
+    /**
+     * Flag this command as experimental.
+     */
     protected final void flagAsExperimental() {
         this.isExperimental = true;
     }
     
+    /**
+     * Get whether this command is experimental.
+     * @return true if this command is experimental.
+     */
     public final boolean isExperimental() {
         return this.isExperimental;
     }
 
+    /**
+     * Get the available aliases of this command.
+     * @param aliases The available alias list.
+     */
     protected final void setAliases(List<String> aliases) {
         this.aliases = aliases;
     }
     
+    /**
+     * Get the command instance by it's name.
+     * @param name The name of the target command.
+     * @return The corresponding command, or null if not found.
+     */
     public static Command getCommand(String name) {
         return registry.get(name);
     }
@@ -101,23 +128,24 @@ public abstract class Command {
         }
     }
     
+    /**
+     * Execute the command.
+     * @param sender The command sender.
+     * @param bot The calling {@link ArcalBot} instance.
+     * @param args The command arguments.
+     */
     public abstract void execute(CommandSender sender, ArcalBot bot, String[] args);
 
+    /**
+     * Execute a command.
+     * @param sender The command sender.
+     * @param name The name of the command.
+     * @param bot The calling {@link ArcalBot} instance.
+     * @param args The command arguments.
+     * @return The command result indicates if it was executed successfully.
+     */
     public static CommandResult execute(CommandSender sender, String name, ArcalBot bot, String[] args) {
-        try {
-            /*
-            if(msg == null) {
-                Logger.getLogger("ArcalBot").info("Work in progress!");
-            } else {
-                EmbedBuilder eb = new EmbedBuilder();
-                eb.setTitle("Work in progress");
-                eb.setDescription("The Java version of <@!"+bot.getJDA().getSelfUser().getId()+"> is still in development!");
-                eb.setColor(0xff4414);
-                eb.setAuthor("ArcalBot", null, bot.getJDA().getSelfUser().getAvatarUrl());
-                msg.getChannel().sendMessage(eb.build()).queue();
-            }
-            */
-            
+        try {            
             Command cmd = Command.getCommand(name);
             if(cmd != null) {
                 cmd.execute(sender, bot, args);
@@ -136,10 +164,18 @@ public abstract class Command {
         }
     }
 
+    /**
+     * Get the description of the command.
+     * @return The description of the command.
+     */
     public final String getDescription() {
         return this.description;
     }
 
+    /**
+     * Set the description of the command.
+     * @param desc The desired description of the command.
+     */
     protected final void setDescription(String desc) {
         this.description = desc;
     }
@@ -152,6 +188,10 @@ public abstract class Command {
         registry.put("react", new CommandReact());
     }
     
+    /**
+     * Get a list of the registered commands.
+     * @return The registered command list.
+     */
     public static Collection<Command> getRegisteredCommands() {
         return registry.values();
     }

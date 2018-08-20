@@ -24,9 +24,12 @@
 package com.arcal.bot.discord.utils;
 
 /**
- *
+ * The {@code IClosable} indicates the implementations are able to close itself.
  * @author Arcal
  */
 public interface IClosable {
+    /**
+     * Close the resource.
+     */
     void close();
 }

@@ -27,7 +27,8 @@ import com.arcal.bot.discord.commands.*;
 import net.dv8tion.jda.core.entities.*;
 
 /**
- *
+ * The {@code UserSender} indicates that this command sender is a
+ * Discord user, including individual users and guild members.
  * @author Arcal
  */
 public class UserSender implements CommandSender {
@@ -44,10 +45,18 @@ public class UserSender implements CommandSender {
         return user.getName();
     }
     
+    /**
+     * Get the user sent the command.
+     * @return The corresponding user.
+     */
     public User getUser() {
         return this.user;
     }
 
+    /**
+     * Get the origin message contained the command.
+     * @return The origin message.
+     */
     public Message getOriginMessage() {
         return this.msg;
     }
@@ -66,6 +75,13 @@ public class UserSender implements CommandSender {
         });
     }
     
+    /**
+     * Get the mention text of the user.<br>
+     * Usage: <pre>
+     *     String response = "Hi, " + sender.getMention() + "!";
+     * </pre>
+     * @return The raw mention format of the user. (&lt;@!....&gt;)
+     */
     public String getMention() {
         return "<@!" + user.getId() + ">";
     }

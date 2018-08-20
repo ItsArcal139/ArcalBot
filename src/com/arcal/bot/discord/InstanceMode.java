@@ -24,7 +24,8 @@
 package com.arcal.bot.discord;
 
 /**
- *
+ * The {@code InstanceMode} indicates the modes of how {@code ArcalBot} instances
+ * are created.
  * @author Arcal
  */
 public enum InstanceMode {

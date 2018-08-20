@@ -27,7 +27,8 @@ import java.io.*;
 import java.util.logging.*;
 
 /**
- *
+ * The {@code StdoutConsoleHandler} replaces the original {@link ConsoleHandler},
+ * as the original one would output to the {@code System.err} OutputStream.
  * @author Arcal
  */
 public class StdoutConsoleHandler extends ConsoleHandler {

@@ -35,12 +35,21 @@ public class PendingCommand implements Runnable {
     private CommandSender sender = null;
     private String cmdLine = null;
     
+    /**
+     * Create a {@code PendingCommand} instance.
+     * @param bot The ArcalBot instance.
+     * @param sender The command sender.
+     * @param cmdLine The command line.
+     */
     public PendingCommand(ArcalBot bot, CommandSender sender, String cmdLine) {
         this.bot = bot;
         this.sender = sender;
         this.cmdLine = cmdLine;
     }
     
+    /**
+     * Run the pended command.
+     */
     @Override
     public void run() {
         bot.handleCommand(sender, cmdLine);

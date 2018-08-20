@@ -35,12 +35,19 @@ import net.dv8tion.jda.core.entities.*;
  * @author Arcal
  */
 public class CommandReact extends Command {
+    /**
+     * Create a {@code CommandReact} command. It reacts to the sent message
+     * with the user-specified emoji or emote.
+     */
     public CommandReact() {
         super("react");
         this.flagCommandScope(Scope.User);
         this.flagAsExperimental();
     }
     
+    /**
+     * Add react by the given emoji or emote. 
+     */
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);

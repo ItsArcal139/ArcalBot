@@ -34,10 +34,16 @@ import net.dv8tion.jda.core.entities.*;
  * @author Arcal
  */
 public class CommandDump extends Command {
+    /**
+     * Create a {@code CommandDump} instance. It switches the dump mode for the requesting guild.
+     */
     public CommandDump() {
         super("dump");
     }
     
+    /**
+     * Switch the dump mode between on and off.
+     */
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);

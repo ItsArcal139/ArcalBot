@@ -32,11 +32,17 @@ import net.dv8tion.jda.core.entities.*;
  * @author Arcal
  */
 public class CommandCrash extends Command {
+    /**
+     * Create a {@code CommandCrash} instance. It crashes the bot by throwing an {@link Error}.
+     */
     public CommandCrash() {
         super("crash");
         this.flagCommandScope(Scope.None);
     }
 
+    /**
+     * Crash the server by throwing an Error.
+     */
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);

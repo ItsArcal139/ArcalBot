@@ -26,8 +26,12 @@ package com.arcal.bot.discord;
 import com.arcal.bot.discord.commands.*;
 import net.dv8tion.jda.core.entities.*;
 
+
 /**
- *
+ * The {@code MemberSender} indicates that this command sender is a
+ * Discord user, but only guild members.
+ * This class inherits {@link UserSender}, as members send commands via
+ * Discord messages.
  * @author Arcal
  */
 public class MemberSender extends UserSender {
@@ -43,10 +47,18 @@ public class MemberSender extends UserSender {
         return user.getNickname();
     }
     
+    /**
+     * Get the guild member sent the command.
+     * @return The corresponding guild member.
+     */
     public Member getMember() {
         return user;
     }
     
+    /**
+     * Get the guild of the sender.
+     * @return The guild of the member sender.
+     */
     public Guild getGuild() {
         return user.getGuild();
     }

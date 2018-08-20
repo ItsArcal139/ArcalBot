@@ -35,15 +35,23 @@ public class CommandExit extends Command {
     private boolean activated = false;
     private final Object lock = new Object();
 
+    /**
+     * Create a {@code CommandExit} instance. After it was executed, the bot will exit.
+     */
     public CommandExit() {
         super("exit");
         this.flagCommandScope(Scope.Console);
     }
     
+    /**
+     * Shutdown the bot from the console.
+     */
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);
+        // Use a lock so this command wouldn't be executed simultaneously.
         synchronized(lock) {
+            // Trust me, there wouldn't be a deadlock.
             if(!activated) {
                 this.activated = true;
                 System.exit(0);

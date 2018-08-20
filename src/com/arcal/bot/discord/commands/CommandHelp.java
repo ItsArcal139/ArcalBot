@@ -35,10 +35,16 @@ import net.dv8tion.jda.core.entities.*;
  * @author Arcal
  */
 public class CommandHelp extends Command {
+    /**
+     * Create a {@code CommandHelp} instance. It sends command list to the sender.
+     */
     public CommandHelp() {
         super("help");
     }
     
+    /**
+     * Send command list to the sender.
+     */
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {
         this.checkSender(sender);

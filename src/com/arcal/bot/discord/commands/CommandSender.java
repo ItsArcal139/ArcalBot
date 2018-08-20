@@ -26,11 +26,27 @@ package com.arcal.bot.discord.commands;
 import net.dv8tion.jda.core.entities.*;
 
 /**
- *
+ * The {@code CommandSender} indicates that the implementations of
+ * this class has the ability to send commands, and it is also able
+ * to receive responds directly from the command executor.
  * @author Arcal
  */
 public interface CommandSender {
+    /**
+     * Get the proper name for this command sender.
+     * @return A proper name for this sender.
+     */
     String getName();
+    
+    /**
+     * Send a message to this command sender.
+     * @param msg The message to send.
+     */
     void sendMessage(String msg);
+    
+    /**
+     * Send a rich embed message to this command sender.
+     * @param msg The rich embed message to send.
+     */
     void sendMessage(MessageEmbed msg);
 }

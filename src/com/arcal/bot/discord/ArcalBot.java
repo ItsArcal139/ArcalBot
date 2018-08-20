@@ -53,26 +53,56 @@ public class ArcalBot extends ListenerAdapter {
     private boolean isReady = false;
     private boolean isStarted = false;
 
+    /**
+     * Get the global bot configuration.
+     * The call is equivalent to {@link Main#getGlobalConfig()}.
+     * @return The global bot configuration.
+     * @see Main#getGlobalConfig() 
+     */
     public final BotConfiguration getGlobalConfig() {
         return Main.getGlobalConfig();
     }
     
-    public ArcalBot(JDA jda, String[] args) {
+    /**
+     * Create an ArcalBot instance, with a given JDA session.
+     * @param jda The JDA session. Can be null only when using shards.
+     * @throws IllegalStateException when {@code jda} is null and is not using shards.
+     */
+    public ArcalBot(JDA jda) throws IllegalStateException {
+        if(!Main.isUsingShard() && jda == null) {
+            throw new IllegalStateException("The JDA session cannot be null.");
+        }
         this.isRunning = true;
         this.jda = jda;
         File cfdir = new File("configs/");
         if(!cfdir.exists()) cfdir.mkdir();
     }
     
+    /**
+     * Specify the logger of this ArcalBot instance.
+     * @param logger A specified logger.
+     */
     public void setLogger(Logger logger) {
         this.logger = logger;
     }
     
-    public void useShard(JDA jda) {
+    /**
+     * Make ArcalBot prepared to use shards.
+     * @param jda The JDA session.
+     * @throws IllegalStateException when it's called after {@link ArcalBot#start()}.
+     */
+    public void useShard(JDA jda) throws IllegalStateException {
+        if(this.isStarted) {
+            throw new IllegalStateException("Cannot run useShard() after start()");
+        }
         this.guildMode = false;
         this.jda = jda;
     }
     
+    /**
+     * Set the handing guild of this ArcalBot instance.
+     * @param g The guild to be handled.
+     */
     public void setGuild(Guild g) {
         if(!Main.isUsingShard()) {
             this.guildMode = true;
@@ -81,6 +111,10 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
+    /**
+     * Called when the JDA was ready and only if was built asynchronously.
+     * @param event The ready event.
+     */
     @Override
     public void onReady(ReadyEvent event) {
         if(event.getJDA().equals(jda)) {
@@ -97,6 +131,10 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
+    /**
+     * Called when the JDA was disconnected from the Discord API.
+     * @param event The disconnect event.
+     */
     @Override
     public void onDisconnect(DisconnectEvent event) {
         if(event.getJDA().equals(jda)) {
@@ -104,6 +142,9 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
+    /**
+     * Start the ArcalBot.
+     */
     public void start() {
         Thread commandHandler = new Thread(() -> {
             while(this.isRunning) {
@@ -118,14 +159,25 @@ public class ArcalBot extends ListenerAdapter {
         this.isStarted = true;
     }
     
+    /**
+     * Get whether this instance was started.
+     * @return true if it was started.
+     */
     public boolean isStarted() {
         return this.isStarted;
     }
     
+    /**
+     * Get whether this instance is running. Mainly used by while loops.
+     * @return true if it is running.
+     */
     public boolean isRunning() {
         return this.isRunning;
     }
     
+    /**
+     * Shutdown the ArcalBot instance.
+     */
     public void shutdown() {
         this.isRunning = false;
         for(GuildManager manager : this.guildManagers.values()) {
@@ -133,10 +185,20 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
+    /**
+     * Queue a command to the pending list.
+     * @param sender
+     * @param cmdLine 
+     */
     public void pendCommand(CommandSender sender, String cmdLine) {
         this.pendingCommands.add(new PendingCommand(this, sender, cmdLine));
     }
     
+    /**
+     * Get the guild-wide configuration for a guild.
+     * @param guild The specified guild.
+     * @return The corresponding configuration.
+     */
     public GuildConfiguration getGuildConfig(Guild guild) {
         GuildManager manager = this.getGuildManager(guild);
         if(manager == null) {
@@ -145,32 +207,58 @@ public class ArcalBot extends ListenerAdapter {
         return manager.getConfig();
     }
     
+    /**
+     * Get the guild manager handling the specified guild from this instance.
+     * @param guild The handled guild.
+     * @return The corresponding guild manager.
+     */
     public GuildManager getGuildManager(Guild guild) {
         return this.guildManagers.get(guild);
     }
     
+    /**
+     * Get the command prefix for a specified guild.
+     * @param guild A specified guild.
+     * @return The corresponding command prefix.
+     */
     public String getCommandPrefix(Guild guild) {
         return this.getGuildConfig(guild).getValue("cmd-prefix");
     }
     
+    /**
+     * Set the command prefix to a specified one for a guild.
+     * @param guild A specified guild.
+     * @param prefix The desired prefix.
+     */
     public void setCommandPrefix(Guild guild, String prefix) {
         this.getGuildConfig(guild).setValue("cmd-prefix", prefix);
     }
     
+    /**
+     * Set whether ArcalBot should dump error details for the specified guild.
+     * @param guild The specified guild.
+     * @param flag true if it should dump details for the guild.
+     */
     public void setDumpExceptions(Guild guild, boolean flag) {
         this.getGuildConfig(guild).setValue("dump-exceptions", flag ? "true" : "false");
     }
     
+    /**
+     * Get whether ArcalBot should dump error details for the specified guild.
+     * @param guild The specified guild.
+     * @return true if it should dump details for the guild.
+     */
     public boolean doesDumpExceptions(Guild guild) {
         return this.getGuildConfig(guild).getValue("dump-exceptions").toLowerCase().equals("true");
     }
 
     /**
+     * Handle a command line.
      * Note: should only be called within API.
-     * @param sender
-     * @param cmdLine
-     * @param msg
-     * @return 
+     * 
+     * @param sender The command sender.
+     * @param cmdLine The command line.
+     * @return A command result, which indicates whether it was successful.
      */
     public CommandResult handleCommand(CommandSender sender, String cmdLine) {
         ArcalBot bot = this;
@@ -259,15 +347,23 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
+    /**
+     * Build a rich-embed message from a {@link Throwable}.
+     * @param eb An {@link EmbedBuilder} instance for more customizations.
+     * @param t The occurred error.
+     * @param doDump Whether it should dump the details of the {@code Throwable}.
+     */
     private void buildEmbedByThrowable(EmbedBuilder eb, Throwable t, boolean doDump) {
         String errMsg = t.getMessage();
         eb.setTitle("Error occured");
         eb.setDescription(errMsg == null ? (doDump ? "I saw him. He was creepy." : "Unknown error! Try dump mode and do it again.") : errMsg);
         
+        // Since Errors should not really be caught and handled safely, if
+        // we caught them, we should force-dump it and shutdown the ArcalBot
+        // immediately.
         boolean shouldForceDump = t instanceof Error;
         if(shouldForceDump) {
-            // That means we might met an unrecoverable fault.
-            // (We even should not try to catch that according to Javadoc.)
+            // Random quotes. Makes it looks not-so-serious.
             List<String> quotes = Arrays.asList(
                     "I blame Arcal.",
                     "Ah! Gotcha, ArcalBotty.",
@@ -304,10 +400,19 @@ public class ArcalBot extends ListenerAdapter {
         eb.setAuthor("ArcalBot", null, this.getJDA().getSelfUser().getAvatarUrl());
     }
 
+    /**
+     * Get the attached logger of this instance.
+     * @return The logger attached to this instance.
+     */
     public Logger getLogger() {
         return logger;
     }
     
+    /**
+     * Called when the JDA session attached to this ArcalBot
+     * received an message from Discord.
+     * @param event The event passed from Discord API.
+     */
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if(event.getJDA().equals(jda)) {
@@ -340,10 +445,18 @@ public class ArcalBot extends ListenerAdapter {
         }
     }
     
+    /**
+     * Get the JDA session.
+     * @return The JDA session.
+     */
     public JDA getJDA() {
         return this.jda;
     }
     
+    /**
+     * Get the guild this instance is handling.
+     * @return The guild this ArcalBot is handling.
+     */
     public Guild getGuild() {
         Set<Guild> gs = this.guildManagers.keySet();
         if(gs.size() > 1) {
@@ -355,6 +468,10 @@ public class ArcalBot extends ListenerAdapter {
         return gs.iterator().next();
     }
     
+    /**
+     * Get the proper name for this ArcalBot instance.
+     * @return The name for this instance.
+     */
     @Override
     public String toString() {
         return logger.getName();

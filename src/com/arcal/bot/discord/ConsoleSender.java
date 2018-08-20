@@ -28,7 +28,8 @@ import java.util.logging.Logger;
 import net.dv8tion.jda.core.entities.*;
 
 /**
- *
+ * The {@code ConsoleSender} indicates that this command was sent directly
+ * from the console.
  * @author Arcal
  */
 public class ConsoleSender implements CommandSender {
@@ -48,6 +49,12 @@ public class ConsoleSender implements CommandSender {
         logger.info(msg);
     }
 
+    /**
+     * Send a rich embed message to the console. Although console doesn't directly
+     * support embed messages, we are able to show those messages by 
+     * translating them to plain texts.
+     * @param msg The rich embed message.
+     */
     @Override
     public void sendMessage(MessageEmbed msg) {
         this.sendMessage("# " + msg.getTitle());

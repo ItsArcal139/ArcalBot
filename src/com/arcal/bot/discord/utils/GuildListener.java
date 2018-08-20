@@ -56,7 +56,7 @@ public class GuildListener extends ListenerAdapter {
         });
         
         if(!Main.isUsingShard()) {
-            ArcalBot bot = new ArcalBot(jda, Main.getArgs());
+            ArcalBot bot = new ArcalBot(jda);
             logger.info("Creating an instance and booting it.");
             Main.addInstance(jda, bot, g);
             bot.start();
