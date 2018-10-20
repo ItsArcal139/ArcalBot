@@ -138,7 +138,7 @@ public class Main {
             // Simply validates the token.
             // At least cannot be the default "<token>" one in the demo.
             if(token.equals("<token>")) {
-                // The token was not given. Quit becuase a token is required.
+                // The token was not given. Quit because a token is required.
                 logger.severe("You must set the Discord client token for ArcalBot.");
                 System.exit(1);
             }
