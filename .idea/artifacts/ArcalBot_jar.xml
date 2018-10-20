@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ArcalBot:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ArcalBot_jar</output-path>
+    <root id="archive" name="ArcalBot.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/build/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="ArcalBot" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dist/lib/jline-3.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dist/lib/kotlin-runtime.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dist/lib/JDA-3.6.0_354-withDependencies.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/dist/lib/jna-4.5.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
