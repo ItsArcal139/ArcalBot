@@ -28,6 +28,8 @@ import com.arcal.bot.discord.exception.*;
 import net.dv8tion.jda.core.entities.*;
 
 /**
+ * This is a ArcalBot command intended for debug only.
+ * It throws an {@link Error} to test the error handing system in ArcalBot.
  *
  * @author Arcal
  */
@@ -38,10 +40,13 @@ public class CommandCrash extends Command {
     public CommandCrash() {
         super("crash");
         this.flagCommandScope(Scope.None);
+
+        // Uncomment the following line ONLY if you are debugging ArcalBot.
+        // this.flagCommandScope(Scope.All);
     }
 
     /**
-     * Crash the server by throwing an Error.
+     * Crash the server by throwing an {@link Error}.
      */
     @Override
     public void execute(CommandSender sender, ArcalBot bot, String[] args) {

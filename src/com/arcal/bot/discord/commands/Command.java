@@ -47,7 +47,7 @@ public abstract class Command {
     private Scope cmdScope = Scope.All;
     
     /**
-     * The {@code Scope} indicates the usable range of a command.
+     * The {@code Scope} indicates the usable range, source or role of a command.
      */
     public enum Scope {
         None, Console, User, Member, All;
@@ -85,8 +85,8 @@ public abstract class Command {
     }
 
     /**
-     * Get the available aliases of this command.
-     * @param aliases The available alias list.
+     * Set the available aliases for this command.
+     * @param aliases The available alias list for this command.
      */
     protected final void setAliases(List<String> aliases) {
         this.aliases = aliases;
@@ -102,7 +102,7 @@ public abstract class Command {
     }
 
     /**
-     * This method should be called from {@link Command#execute(CommandSender, ArcalBot, String[], Message)},
+     * This method should be called before the command actually being executed,
      * since it checks the sender that if he is allowed to execute this command.
      * @param sender The command sender.
      */
@@ -130,6 +130,9 @@ public abstract class Command {
     
     /**
      * Execute the command.
+     * Should run {@link Command#checkSender(CommandSender)} at the very first line in the block,
+     * to prevent scope-related issue.
+     *
      * @param sender The command sender.
      * @param bot The calling {@link ArcalBot} instance.
      * @param args The command arguments.
@@ -148,6 +151,8 @@ public abstract class Command {
         try {            
             Command cmd = Command.getCommand(name);
             if(cmd != null) {
+                // Since sender should always be checked before execution, we check sender here.
+                cmd.checkSender(sender);
                 cmd.execute(sender, bot, args);
             } else {
                 if(sender instanceof ConsoleSender) {
@@ -173,7 +178,7 @@ public abstract class Command {
     }
 
     /**
-     * Set the description of the command.
+     * Set the description for the command.
      * @param desc The desired description of the command.
      */
     protected final void setDescription(String desc) {

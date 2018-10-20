@@ -148,6 +148,8 @@ public class ArcalBot extends ListenerAdapter {
     public void start() {
         Thread commandHandler = new Thread(() -> {
             while(this.isRunning) {
+                // A workaround for the handler not handling the new pending commands.
+                Thread.yield();
                 if(pendingCommands.size() > 0) {
                     PendingCommand pc = pendingCommands.remove(0);
                     Thread t = new Thread(pc);
@@ -187,8 +189,8 @@ public class ArcalBot extends ListenerAdapter {
     
     /**
      * Queue a command to the pending list.
-     * @param sender
-     * @param cmdLine 
+     * @param sender The command sender.
+     * @param cmdLine The command line to be pended.
      */
     public void pendCommand(CommandSender sender, String cmdLine) {
         this.pendingCommands.add(new PendingCommand(this, sender, cmdLine));
@@ -432,13 +434,9 @@ public class ArcalBot extends ListenerAdapter {
                 boolean shouldHandle = cmdLine.startsWith(cmdPrefix);
                 if (shouldHandle) {
                     msg.addReaction("🚥").queue((Void v) -> {
-                        Thread t = new Thread(() -> {
-                            CommandSender sender = new UserSender(msg.getAuthor(), msg);
-                            if(msg.getMember() != null) sender = new MemberSender(msg.getMember(), msg);
-                            // bot.handleCommand(sender, cmdLine.substring(cmdPrefix.length()), msg);
-                            bot.pendCommand(sender, cmdLine.substring(cmdPrefix.length()));
-                        });
-                        t.start();
+                        CommandSender sender = new UserSender(msg.getAuthor(), msg);
+                        if(msg.getMember() != null) sender = new MemberSender(msg.getMember(), msg);
+                        bot.pendCommand(sender, cmdLine.substring(cmdPrefix.length()));
                     });
                 }
             }

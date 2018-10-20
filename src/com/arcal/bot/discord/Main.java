@@ -320,6 +320,7 @@ public class Main {
      * @return true if the command was executed successfully.
      */
     public static boolean executeCommand(CommandSender sender, String command) {
+        logger.info("Pending command => " + command);
         for(ArcalBot bot : Main.botInstances) {
             bot.pendCommand(ConsoleSender.getInstance(), command);
         }
